@@ -6,3 +6,4 @@ Scripts
 =======
 
 * check_src_releases.sh : list src directories with release status
+* Makefile : useful Makefile for multiple python/plone versions
