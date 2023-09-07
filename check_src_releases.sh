@@ -2,6 +2,7 @@
 
 # Script to be used in a plone buildout to check if development eggs must be released.
 # Must be run in buildout src directory
+# if argument "1" is passed, only changed folders are echoed
 
 if [[ "$PWD" != */src ]];
 then
@@ -30,7 +31,7 @@ do
         # echo $found
         if [ "$found" ]
         then
-          echo "$j/$cf UNCHANGED"
+          if [ "$1" != "1" ]; then echo "$j/$cf UNCHANGED"; fi
         else
           echo "$j/$cf"
         fi
