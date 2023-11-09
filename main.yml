@@ -33,7 +33,7 @@ jobs:
           pip install --upgrade pip
           pip install -r requirements-${{ matrix.plone }}.txt
       - name: Cache eggs
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         env:
           cache-name: cache-eggs
         with:
@@ -69,7 +69,7 @@ jobs:
           pip install -r requirements-${{matrix.plone}}.txt
           pip install -U coveralls coverage
       - name: Cache eggs
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         env:
           cache-name: cache-eggs
         with:
