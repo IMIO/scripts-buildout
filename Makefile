@@ -15,8 +15,11 @@ endif
 ifndef plone
 ifeq (,$(filter setup,$(MAKECMDGOALS)))
   plone=$(old_plone)
-  b_o=-N
 endif
+endif
+
+ifneq ($(wildcard bin/instance),)
+    b_o=-N
 endif
 
 ifndef python
