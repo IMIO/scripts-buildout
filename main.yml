@@ -23,7 +23,7 @@ jobs:
 #            plone: "6.0"
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Set up pyenv and Python
         uses: "gabrielfalcao/pyenv-action@v14"
         with:
@@ -33,7 +33,7 @@ jobs:
           pip install --upgrade pip
           pip install -r requirements-${{ matrix.plone }}.txt
       - name: Cache eggs
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         env:
           cache-name: cache-eggs
         with:
@@ -70,7 +70,7 @@ jobs:
             plone: "6.0"
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Set up pyenv and Python
         uses: "gabrielfalcao/pyenv-action@v14"
         with:
@@ -81,7 +81,7 @@ jobs:
           pip install -r requirements-${{matrix.plone}}.txt
           pip install -U coveralls coverage
       - name: Cache eggs
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         env:
           cache-name: cache-eggs
         with:
