@@ -95,6 +95,7 @@ done
 if [ "$DOIT" == "1" ]; then
   echo "Running command: git ci -am \"Restoring previous files\" && git push" >&2
   git ci -am "Restoring previous files" && git push
+  echo ""
 else
   echo "Will run command: git ci -am \"Restoring previous files\" && git push" >&2
 fi

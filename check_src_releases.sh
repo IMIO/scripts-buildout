@@ -8,7 +8,8 @@ TOOL=''
 TOOLS="iadocs"
 escaped_iadocs="collective.contact.importexport collective.externaleditor collective.portlet.actions collective.relationhelpers
                 collective.z3cform.select2 imio.dms.mail imio.transmogrifier.contact imio.transmogrifier.iadocs
-                plone.app.robotframework plone.formwidget.datetime Products.LDAPUserFolder transmogrify.dexterity"
+                plone.app.robotframework plone.formwidget.datetime Products.CMFEditions Products.LDAPUserFolder
+                transmogrify.dexterity zope.sendmail"
 
 usage () {
     echo "DESCRIPTION: This script must be used on an src buildout directory, to check if development eggs are to be released."
