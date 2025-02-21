@@ -1,7 +1,6 @@
 #!/bin/bash
 
-# Script to be used in a plone buildout to check if development eggs must be released.
-# if argument "1" is passed, only changed folders are echoed
+# Script to be used in a Plone buildout to redo a tag after modifications.
 
 DOIT=''
 TAG=''
@@ -51,8 +50,34 @@ if [ ! $(git tag -l "$TAG") ]; then
     exit 1
 fi
 
-# change versioned files
-echo "Backuping versioned files"
+merge_changes_txt() {
+  local current_file="CHANGES.txt.bck"
+  local tag_file="CHANGES.txt"
+  local temp_file="CHANGES.txt.temp"
+  local patch_file="changes.diff"
+  # check if current_file exists, otherwise get it from tag
+  if [ ! -e "$current_file" ]; then
+      cp "$tag_file" "$current_file"
+      git restore -s $TAG -- $tag_file
+  fi
+  sed -n '1,/^$/p' "$current_file" > "$temp_file"
+  sed -n "/^$TAG /,\$p" "$current_file" >> "$temp_file"
+  diff "$tag_file" "$temp_file" > "$patch_file"
+  if [ -s "$patch_file" ]; then
+    echo "Patching CHANGES.txt"
+    cat $patch_file
+    if [ "$DOIT" == "1" ]; then
+      patch "$tag_file" < "$patch_file"
+    else
+      rm $tag_file
+      mv $current_file $tag_file
+    fi
+  fi
+  rm $patch_file $temp_file
+}
+
+# Change versioned files
+echo "Backing up versioned files"
 for f in $FILES
 do
   if [ -e $f ]; then
@@ -65,13 +90,16 @@ do
   fi
 done
 
+# Special handling for CHANGES.txt to merge additional lines
+merge_changes_txt
+
 echo "Deleting tag '$TAG'"
-cmd=(git tag -d $TAG)
+cmd=(git tag -d "$TAG")
 execute_cmd "${cmd[@]}"
-cmd=(git push --delete origin $TAG)
+cmd=(git push --delete origin "$TAG")
 execute_cmd "${cmd[@]}"
 
-# Re tag
+# Re-tag
 echo "Redoing tag $TAG"
 if [ "$DOIT" == "1" ]; then
   echo "Running command: git ci -am \"Redoing release $TAG\" && git tag $TAG -m \"Tagging $TAG\" && git push origin $TAG" >&2
@@ -80,14 +108,14 @@ else
   echo "Will run command: git ci -am \"Redoing release $TAG\" && git tag $TAG -m \"Tagging $TAG\" && git push origin $TAG" >&2
 fi
 
-# restoring versioned files
+# Restoring versioned files
 echo "Restoring versioned files"
 for f in $FILES
 do
-  if [ -e $f ]; then
-    cmd=(cp $f.bck $f)
+  if [ -e "$f" ]; then
+    cmd=(cp "$f.bck" "$f")
     execute_cmd "${cmd[@]}"
-    cmd=(rm $f.bck)
+    cmd=(rm "$f.bck")
     execute_cmd "${cmd[@]}"
   fi
 done
