@@ -27,7 +27,7 @@ ifeq ($(plone),4.3)
   python=2.7
 endif
 ifeq ($(plone),5.2)
-  python=3.7
+  python=3.8
 endif
 ifeq ($(plone),6.0)
   python=3.10
