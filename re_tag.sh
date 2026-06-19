@@ -4,7 +4,18 @@
 
 DOIT=''
 TAG=''
-FILES="version.txt CHANGES.txt"
+
+# Detect which changelog file exists (CHANGES.txt or CHANGES.rst)
+CHANGES_FILE=''
+for c in CHANGES.txt CHANGES.rst
+do
+  if [ -e "$c" ]; then
+    CHANGES_FILE="$c"
+    break
+  fi
+done
+
+FILES="version.txt $CHANGES_FILE"
 
 usage () {
     echo "DESCRIPTION: This script must be used to redo a specific tag."
@@ -51,9 +62,9 @@ if [ ! $(git tag -l "$TAG") ]; then
 fi
 
 merge_changes_txt() {
-  local current_file="CHANGES.txt.bck"
-  local tag_file="CHANGES.txt"
-  local temp_file="CHANGES.txt.temp"
+  local tag_file="$CHANGES_FILE"
+  local current_file="$CHANGES_FILE.bck"
+  local temp_file="$CHANGES_FILE.temp"
   local patch_file="changes.diff"
   # check if current_file exists, otherwise get it from tag
   if [ ! -e "$current_file" ]; then
@@ -64,7 +75,7 @@ merge_changes_txt() {
   sed -n "/^$TAG /,\$p" "$current_file" >> "$temp_file"
   diff "$tag_file" "$temp_file" > "$patch_file"
   if [ -s "$patch_file" ]; then
-    echo "Patching CHANGES.txt"
+    echo "Patching $CHANGES_FILE"
     cat $patch_file
     if [ "$DOIT" == "1" ]; then
       patch "$tag_file" < "$patch_file"
@@ -90,8 +101,10 @@ do
   fi
 done
 
-# Special handling for CHANGES.txt to merge additional lines
-merge_changes_txt
+# Special handling for the changelog file to merge additional lines
+if [ -n "$CHANGES_FILE" ]; then
+  merge_changes_txt
+fi
 
 echo "Deleting tag '$TAG'"
 cmd=(git tag -d "$TAG")
